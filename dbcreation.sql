@@ -1,0 +1,102 @@
+CREATE TABLE `users` (
+    `id` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT , 
+    `name` VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL , 
+    `email` VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL , 
+    `email_verified_at` TIMESTAMP NULL DEFAULT NULL , 
+    `password` VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL , 
+    `remember_token` VARCHAR(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL , 
+    `created_at` TIMESTAMP NULL DEFAULT NULL , 
+    `updated_at` TIMESTAMP NULL DEFAULT NULL , 
+    PRIMARY KEY (`id`)
+) ENGINE = InnoDB;
+
+CREATE TABLE `attacks` (
+    `id` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT , 
+    `created_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP , 
+    `updated_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP , 
+    `user_id` BIGINT(20) UNSIGNED NOT NULL , 
+    `description` VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL , 
+    PRIMARY KEY (`id`)
+) ENGINE = InnoDB;
+
+CREATE TABLE `failed_jobs` (
+    `id` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT , 
+    `uuid` VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL , 
+    `connection` TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL , 
+    `queue` TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL , 
+    `payload` LONGTEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL , 
+    `exception` LONGTEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL , 
+    `failed_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP , PRIMARY KEY (`id`)
+) ENGINE = InnoDB;
+
+CREATE TABLE `friends` (
+    `id` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT , 
+    `listOfUser` BIGINT(20) UNSIGNED NOT NULL , 
+    `friend` BIGINT(20) UNSIGNED NOT NULL , 
+    PRIMARY KEY (`id`)
+) ENGINE = InnoDB;
+
+CREATE TABLE `friend_requests` (
+    `id` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT , 
+    `fromUser` BIGINT(20) UNSIGNED NOT NULL , 
+    `toUser` BIGINT(20) UNSIGNED NOT NULL , 
+    PRIMARY KEY (`id`)
+) ENGINE = InnoDB;
+
+CREATE TABLE `messages` (
+    `id` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT , 
+    `created_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP , 
+    `updated_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP , 
+    `user_id` BIGINT(20) UNSIGNED NOT NULL , 
+    `message` TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL , 
+    `receiver_id` BIGINT(20) UNSIGNED NOT NULL , 
+    PRIMARY KEY (`id`)
+) ENGINE = InnoDB;
+
+CREATE TABLE `password_resets` (
+    `email` VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL , 
+    `token` VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL , 
+    `created_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE = InnoDB;
+
+CREATE TABLE `personnal_acces_tokens` (
+    `id` BIGINT(20) NOT NULL AUTO_INCREMENT , 
+    `tokenable_type` VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL , 
+    `tokenable_id` BIGINT(20) NOT NULL , 
+    `name` VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL , 
+    `token` VARCHAR(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL , 
+    `abilities` TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL , 
+    `last_used_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP , 
+    `created_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP , 
+    `updated_at` DATETIME NULL DEFAULT CURRENT_TIMESTAMP ,
+    PRIMARY KEY (`id`)
+) ENGINE = InnoDB;
+
+ALTER TABLE `attacks` 
+ADD CONSTRAINT `FKA` 
+FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) 
+ON DELETE CASCADE ON UPDATE CASCADE;
+
+ALTER TABLE `friends` 
+ADD CONSTRAINT `FKF1` 
+FOREIGN KEY (`listOfUser`) REFERENCES `users`(`id`) 
+ON DELETE CASCADE ON UPDATE CASCADE; ALTER TABLE `friends` 
+ADD CONSTRAINT `FKF2` FOREIGN KEY (`friend`) REFERENCES `users`(`id`) 
+ON DELETE CASCADE ON UPDATE CASCADE;
+
+ALTER TABLE `friend_requests` 
+ADD CONSTRAINT `FKFR1` 
+FOREIGN KEY (`fromUser`) REFERENCES `users`(`id`) 
+ON DELETE CASCADE ON UPDATE CASCADE; ALTER TABLE `friend_requests` 
+ADD CONSTRAINT `FKFR2` FOREIGN KEY (`toUser`) REFERENCES `users`(`id`) 
+ON DELETE CASCADE ON UPDATE CASCADE;
+
+ALTER TABLE `messages` 
+ADD CONSTRAINT `FKM1` 
+FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) 
+ON DELETE CASCADE ON UPDATE CASCADE; ALTER TABLE `messages` 
+ADD CONSTRAINT `FKM2` 
+FOREIGN KEY (`receiver_id`) REFERENCES `users`(`id`) 
+ON DELETE CASCADE ON UPDATE CASCADE;
+
+ALTER TABLE `users` ADD UNIQUE(`email_verified_at`);
